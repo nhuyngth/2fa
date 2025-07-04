@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🔐 Tạo mã 2FA Gmail | Hoạt động trực tiếp</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      margin: 0;
+      background: linear-gradient(to right, #1f1c2c, #928dab);
+      color: #fff;
+      line-height: 1.6;
+    }
+
+    header {
+      padding: 2rem 1rem;
+      text-align: center;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 2rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .otp-box {
+      margin-top: 1.5rem;
+      background: rgba(0,0,0,0.3);
+      padding: 1.2rem;
+      border-radius: 10px;
+      font-size: 2.2rem;
+      text-align: center;
+      letter-spacing: 4px;
+      font-weight: bold;
+      color: #00ffcc;
+    }
+
+    .countdown {
+      text-align: center;
+      margin-top: 0.5rem;
+      font-size: 1rem;
+      color: #ffd700;
+    }
+
+    .note, .guide {
+      font-size: 0.95rem;
+      color: #eee;
+      margin-top: 1rem;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.85rem;
+      padding: 1rem;
+      color: #aaa;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      margin-top: 2rem;
+    }
+
+    code {
+      background: #333;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      color: #00ffd5;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🔐 Tạo Mã 2FA Gmail Trực Tiếp</h1>
+  </header>
+
+  <div class="container">
+    <label for="secret">🔸 Nhập Secret Key:</label>
+    <input type="text" id="secret" placeholder="Ví dụ: JBSWY3DPEHPK3PXP" oninput="updateOTP()" />
+
+    <div class="otp-box" id="otp">------</div>
+    <div class="countdown">⏳ Còn <span id="timer">--</span> giây</div>
+
+    <div class="note">
+      Mã sẽ tự cập nhật mỗi 30 giây. Hãy đảm bảo bạn nhập đúng <code>secret key</code> khi thiết lập 2FA Gmail.
+    </div>
+
+    <div class="guide">
+      <h3>📘 Cách đăng nhập Gmail bằng mã 2FA này:</h3>
+      <ol>
+        <li>Truy cập <a href="https://gmail.com" target="_blank">gmail.com</a> và đăng nhập bằng tài khoản Google của bạn.</li>
+        <li>Sau khi nhập đúng mật khẩu, Gmail sẽ yêu cầu mã xác minh 2 bước (Google Authenticator). Nếu không có, chọn thử cách khác và chọn Google Authenticator.</li>
+        <li>Dán secret key đã lưu vào ô trên website này.</li>
+        <li>Lấy mã 6 số hiện ra, nhập vào ô xác minh của Gmail.</li>
+        <li>Nếu mã đúng và hợp lệ → đăng nhập thành công!</li>
+      </ol>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 by noritojin.
+  </footer>
+
+  <!-- Base32 decode -->
+  <script>
+    function base32tohex(base32) {
+      const base32chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+      let bits = "", hex = "";
+      base32 = base32.replace(/=+$/, "").toUpperCase();
+      for (let i = 0; i < base32.length; i++) {
+        const val = base32chars.indexOf(base32.charAt(i));
+        bits += val.toString(2).padStart(5, "0");
+      }
+      for (let i = 0; i + 4 <= bits.length; i += 4) {
+        const chunk = bits.substring(i, i + 4);
+        hex += parseInt(chunk, 2).toString(16);
+      }
+      return hex;
+    }
+  </script>
+
+  <!-- TOTP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/2.4.2/sha.js"></script>
+  <script>
+    let intervalId;
+
+    function updateOTP() {
+      const secret = document.getElementById("secret").value.replace(/\s+/g, '');
+      if (!secret) {
+        document.getElementById("otp").textContent = "------";
+        document.getElementById("timer").textContent = "--";
+        clearInterval(intervalId);
+        return;
+      }
+
+      function generateOTP() {
+        const key = base32tohex(secret);
+        const epoch = Math.floor(Date.now() / 1000);
+        const time = Math.floor(epoch / 30).toString(16).padStart(16, "0");
+
+        const shaObj = new jsSHA("SHA-1", "HEX");
+        shaObj.setHMACKey(key, "HEX");
+        shaObj.update(time);
+        const hmac = shaObj.getHMAC("HEX");
+
+        const offset = parseInt(hmac.substring(hmac.length - 1), 16);
+        const binary = parseInt(hmac.substr(offset * 2, 8), 16) & 0x7fffffff;
+        const otp = (binary % 1000000).toString().padStart(6, "0");
+
+        document.getElementById("otp").textContent = otp;
+        document.getElementById("timer").textContent = 30 - (epoch % 30);
+      }
+
+      generateOTP();
+      clearInterval(intervalId);
+      intervalId = setInterval(generateOTP, 1000);
+    }
+  </script>
+
+</body>
+</html>
