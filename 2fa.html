@@ -3,119 +3,168 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>🔐 Tạo mã 2FA Gmail | Hoạt động trực tiếp</title>
+  <title>🔐 Tạo mã 2FA Gmail | Hiện đại & An toàn</title>
   <style>
+    :root {
+      --primary: #00ffc3;
+      --bg: #0f1117;
+      --card: #1c1f26;
+      --text: #ffffff;
+      --accent: #ffcc00;
+    }
+
     body {
-      font-family: "Segoe UI", Tahoma, sans-serif;
       margin: 0;
-      background: linear-gradient(to right, #1f1c2c, #928dab);
-      color: #fff;
-      line-height: 1.6;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     header {
       padding: 2rem 1rem;
       text-align: center;
-      background-color: rgba(0, 0, 0, 0.5);
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background-color: #1a1d25;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
 
     header h1 {
-      font-size: 1.8rem;
       margin: 0;
+      font-size: 1.9rem;
+      color: var(--primary);
     }
 
     .container {
       max-width: 600px;
       margin: auto;
-      padding: 2rem;
+      padding: 2rem 1.5rem;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+      font-size: 1rem;
     }
 
     input[type="text"] {
       width: 100%;
-      padding: 0.8rem;
+      padding: 0.8rem 1rem;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 1rem;
-      margin-top: 0.5rem;
+      background: #2b2e37;
+      color: var(--text);
+      outline: none;
+      margin-bottom: 1rem;
     }
 
-    .otp-box {
-      margin-top: 1.5rem;
-      background: rgba(0,0,0,0.3);
-      padding: 1.2rem;
-      border-radius: 10px;
-      font-size: 2.2rem;
+    .otp-display {
       text-align: center;
-      letter-spacing: 4px;
+      margin: 1.5rem 0;
+    }
+
+    .otp-code {
+      font-size: 2.5rem;
       font-weight: bold;
-      color: #00ffcc;
+      letter-spacing: 8px;
+      color: var(--primary);
+      background: #222;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      display: inline-block;
     }
 
     .countdown {
-      text-align: center;
       margin-top: 0.5rem;
-      font-size: 1rem;
-      color: #ffd700;
+      font-size: 0.95rem;
+      color: var(--accent);
     }
 
-    .note, .guide {
+    .guide {
+      margin-top: 2rem;
       font-size: 0.95rem;
-      color: #eee;
+      line-height: 1.6;
+    }
+
+    .guide h3 {
       margin-top: 1rem;
+      color: var(--primary);
+    }
+
+    .guide code {
+      background: #333;
+      padding: 0.2rem 0.4rem;
+      border-radius: 5px;
+      color: #00ffcc;
     }
 
     footer {
       text-align: center;
       font-size: 0.85rem;
       padding: 1rem;
-      color: #aaa;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      margin-top: 2rem;
+      color: #888;
+      background: #1a1d25;
     }
 
-    code {
-      background: #333;
-      padding: 0.2rem 0.4rem;
-      border-radius: 4px;
-      color: #00ffd5;
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>🔐 Tạo Mã 2FA Gmail Trực Tiếp</h1>
+    <h1>🔐 Tạo mã 2FA Gmail</h1>
   </header>
 
   <div class="container">
-    <label for="secret">🔸 Nhập Secret Key:</label>
-    <input type="text" id="secret" placeholder="Ví dụ: JBSWY3DPEHPK3PXP" oninput="updateOTP()" />
+    <div class="card">
+      <label for="secret">🔸 Nhập Mã 2FA:</label>
+      <input type="text" id="secret" placeholder="VD: JBSWY3DPEHPK3PXP" oninput="updateOTP()" />
 
-    <div class="otp-box" id="otp">------</div>
-    <div class="countdown">⏳ Còn <span id="timer">--</span> giây</div>
+      <div class="otp-display">
+        <div class="otp-code" id="otp">------</div>
+        <div class="countdown">⏳ Còn <span id="timer">--</span> giây</div>
+      </div>
 
-    <div class="note">
-      Mã sẽ tự cập nhật mỗi 30 giây. Hãy đảm bảo bạn nhập đúng <code>secret key</code> khi thiết lập 2FA Gmail.
-    </div>
+      <div class="guide">
+        <h3>📘 Hướng dẫn đăng nhập Gmail bằng mã này:</h3>
+        <ol>
+          <li>Truy cập <a href="https://gmail.com" target="_blank">gmail.com</a> → nhập email & mật khẩu.</li>
+          <li>Gmail yêu cầu mã xác minh (Google Authenticator, Nếu không có chọn thử cách khác sau đó sẽ thấy) → dán mã 2FA vào khung bên trên → lấy mã 6 số.</li>
+          <li>Nhập vào màn hình xác thực 2 bước → Hoàn tất!</li>
+        </ol>
 
-    <div class="guide">
-      <h3>📘 Cách đăng nhập Gmail bằng mã 2FA này:</h3>
-      <ol>
-        <li>Truy cập <a href="https://gmail.com" target="_blank">gmail.com</a> và đăng nhập bằng tài khoản Google của bạn.</li>
-        <li>Sau khi nhập đúng mật khẩu, Gmail sẽ yêu cầu mã xác minh 2 bước (Google Authenticator). Nếu không có, chọn thử cách khác và chọn Google Authenticator.</li>
-        <li>Dán secret key đã lưu vào ô trên website này.</li>
-        <li>Lấy mã 6 số hiện ra, nhập vào ô xác minh của Gmail.</li>
-        <li>Nếu mã đúng và hợp lệ → đăng nhập thành công!</li>
-      </ol>
+        <h3>⚠️ Lưu ý an toàn:</h3>
+        <ul>
+          <li>Không nhập secret key trên máy lạ/công cộng.</li>
+          <li>Nếu nghi bị lộ mã → vào <a href="https://myaccount.google.com/security" target="_blank">Google Security</a> để thay QR mới.</li>
+        </ul>
+      </div>
     </div>
   </div>
 
   <footer>
-    © 2025 by noritojin.
+    © 2025 – Không gửi dữ liệu ra ngoài. An toàn tuyệt đối. Hoạt động offline.
   </footer>
 
-  <!-- Base32 decode -->
+  <!-- base32 decode -->
   <script>
     function base32tohex(base32) {
       const base32chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
@@ -126,8 +175,7 @@
         bits += val.toString(2).padStart(5, "0");
       }
       for (let i = 0; i + 4 <= bits.length; i += 4) {
-        const chunk = bits.substring(i, i + 4);
-        hex += parseInt(chunk, 2).toString(16);
+        hex += parseInt(bits.substr(i, 4), 2).toString(16);
       }
       return hex;
     }
