@@ -135,7 +135,7 @@
 
   <div class="container">
     <div class="card">
-      <label for="secret">🔸 Nhập Mã 2FA:</label>
+      <label for="secret">🔸 Nhập 2FA:</label>
       <input type="text" id="secret" placeholder="VD: JBSWY3DPEHPK3PXP" oninput="updateOTP()" />
 
       <div class="otp-display">
@@ -144,17 +144,18 @@
       </div>
 
       <div class="guide">
-        <h3>📘 Hướng dẫn đăng nhập Gmail bằng mã này:</h3>
+        <h3>📘 Hướng dẫn đăng nhập Gmail bằng 2FA:</h3>
         <ol>
           <li>Truy cập <a href="https://gmail.com" target="_blank">gmail.com</a> → nhập email & mật khẩu.</li>
-          <li>Gmail yêu cầu mã xác minh (Google Authenticator, Nếu không có chọn "THỬ CÁCH KHÁC" chọn tiếp mã Google Authenticator) → dán mã 2FA vào khung bên trên → lấy mã 6 số.</li>
-          <li>Nhập vào màn hình xác thực 2 bước → Hoàn tất!</li>
+          <li>Gmail yêu cầu mã xác minh (Google Authenticator), Nếu không có chọn "THỬ CÁCH KHÁC" chọn tiếp mã Google Authenticator → dán 2FA vào khung bên trên → lấy mã 6 số (hạn dùng 30s).</li>
+          <li>Nhập vào màn hình Gmail xác thực 2 bước → Hoàn tất!</li>
         </ol>
 
-        <h3>⚠️ Lưu ý an toàn:</h3>
+        <h3>⚠️ Lưu ý:</h3>
         <ul>
-          <li>Không nhập secret key trên máy lạ/công cộng.</li>
+          <li>Không nhập 2FA trên máy lạ/công cộng.</li>
           <li>Nếu nghi bị lộ mã → vào <a href="https://myaccount.google.com/security" target="_blank">Google Security</a> để thay QR mới.</li>
+          <li>Khách hàng mua tài khoản cấp, cần gia hạn hằng tháng vui lòng không thay đổi mật khẩu và 2FA.</li>
         </ul>
       </div>
     </div>
